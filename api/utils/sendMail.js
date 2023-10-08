@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer')
 
-const verificationEmail = async(email, token) => {
+const verificationEmail = async (email, token) => {
   const transporter = nodemailer.createTransport({
     // CONFIGURATION!
     service: 'gmail',
@@ -20,12 +20,9 @@ const verificationEmail = async(email, token) => {
 
   // SEND EMAIL!
   try {
-    console.log('Sending email...');
-     const email=await transporter.sendMail(mailOptions);
-     console.log('email is:',email)
-     console.log('Email sent...')
+    const email = await transporter.sendMail(mailOptions)
   } catch (error) {
-    console.log('Error while sending email!');
+    console.log('Error while sending email!')
   }
 }
 

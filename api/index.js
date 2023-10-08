@@ -42,7 +42,9 @@ app.get('/verify/:token', async (req, res) => {
       .status(504)
       .json({ error: true, message: 'Verification Failed!' })
   }
-})
+});
+
+
 
 // CONNECTING TO DATABASE!
 mongoose

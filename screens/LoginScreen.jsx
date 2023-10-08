@@ -1,4 +1,5 @@
 import {
+  Alert,
   Image,
   KeyboardAvoidingView,
   Pressable,
@@ -6,18 +7,67 @@ import {
   Text,
   TextInput,
   View
-} from 'react-native';
-import React, { useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialIcons } from '@expo/vector-icons';
-import { AntDesign } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+} from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { MaterialIcons } from '@expo/vector-icons'
+import { AntDesign } from '@expo/vector-icons'
+import { useNavigation } from '@react-navigation/native'
+import axios from 'axios'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function LoginScreen () {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
-  const navigation = useNavigation();
+  const navigation = useNavigation()
+
+  useEffect(() => {
+    const handleAuthState = async () => {
+      try {
+        // GET TOKEN FROM STORAGE!
+        const token = await AsyncStorage.getItem('@tokenAmazon')
+        // IF TOKEN NOT FOUND STAY ON LOGIN PAGE!
+        if (!token) {
+          return
+        }
+        if (token) {
+          navigation.navigate('Main')
+        }
+        // GET USER DATA!
+        // const response = axios.get('/api/user?userId=')
+        // TOKEN FOUND REDIRECT TO HOME SCREEN!
+      } catch (error) {
+        console.log('ERROR-> ', error.message)
+      }
+    }
+    handleAuthState()
+  }, [])
+
+  // HANDLE LOGIN!
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post(
+        'http://192.168.2.166:8080/api/user/login',
+        { email, password }
+      )
+
+      // SUCCESS!
+      if (response?.data?.success) {
+        // STORE THE TOKEN IN LOCAL STORAGE!
+        AsyncStorage.setItem('@tokenAmazon', response?.data?.token)
+
+        // REDIRECT TO HOME SCREEN!
+        navigation.replace('Main')
+      }
+
+      if (response?.data?.error) {
+        Alert.alert(response?.data?.message)
+      }
+    } catch (error) {
+      console.log('Some kind of error while login: ', error)
+    }
+  }
 
   return (
     <SafeAreaView
@@ -121,6 +171,7 @@ export default function LoginScreen () {
           <View style={{ marginTop: 70 }} />
 
           <Pressable
+            onPress={handleLogin}
             style={{
               width: 200,
               marginLeft: 'auto',
@@ -142,7 +193,10 @@ export default function LoginScreen () {
             </Text>
           </Pressable>
 
-          <Pressable style={{ marginTop: 15 }} onPress={()=> navigation.navigate('register')} >
+          <Pressable
+            style={{ marginTop: 15 }}
+            onPress={() => navigation.navigate('register')}
+          >
             <Text style={{ textAlign: 'center', color: 'gray', fontSize: 16 }}>
               Don't have an account? Sign Up
             </Text>

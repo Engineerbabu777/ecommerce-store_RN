@@ -27,7 +27,7 @@ export default function RegisterScreen () {
     console.log('DATA SENDING-> ',{email,name,password});
     try {
       const response = await axios.post(
-        "http://192.168.123.42:8080/api/user/register",
+        "http://192.168.2.166:8080/api/user/register",
         { email, name, password }
       )
 

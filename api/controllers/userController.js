@@ -1,19 +1,20 @@
 const router = require('express').Router()
+const userModel = require('../models/userModel')
 const User = require('../models/userModel')
 const verificationEmail = require('../utils/sendMail')
 const crypto = require('crypto')
+const jwt = require('jsonwebtoken')
+const constant = require('../constants')
+
+
 
 // WE ARE HANDLING REGISTER ROUTE HERE!!
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body
 
-    console.log('RECEVING DATA-> ', { name, email, password })
-
     // IF EMAIL IS ALREADY EXISTS!
     const userExists = await User.findOne({ email: email })
-
-    console.log('IS USER EXISTS-> ', userExists)
 
     if (userExists?.email) {
       return res
@@ -21,12 +22,8 @@ router.post('/register', async (req, res) => {
         .json({ error: true, message: 'EMAIL ALREADY EXISTS!' })
     }
 
-    // console.log('Generating token....');
-
     // GENERATE TOKEN!
     const token = crypto.randomBytes(32).toString('hex')
-
-    console.log('TOKEN IS OK! Now Saving User')
 
     // CREATE NEW USER!
     const newDoc = await User.create({
@@ -36,12 +33,8 @@ router.post('/register', async (req, res) => {
       verificationToken: token
     })
 
-    console.log('User is saved! now sending email function calling!')
-
     // SEND VERIFICATION EMAIL TO USER!
     await verificationEmail(email, token)
-
-    console.log('EMAIL IS SEND!')
 
     return res
       .status(200)
@@ -55,9 +48,32 @@ router.post('/register', async (req, res) => {
   }
 })
 
+
 // WE ARE HANDLING LOGIN ROUTE HERE!
-router.get('/login', async (req, res) => {
+router.post('/login', async (req, res) => {
   try {
+    const { email, password } = req.body;
+
+    console.log('EMAIL IS : ', email)
+
+    // GET IF USER EXISTS!
+    const isUserFound = await userModel.findOne({ email })
+
+    if (!isUserFound?.email) {
+      return res.status(401).json({ error: true, message: 'User not Found!' })
+    }
+
+    // MATCH THE PASSWORDS!
+    if (isUserFound?.password !== password) {
+      return res
+        .status(401)
+        .json({ error: true, message: 'Passwords Not matched!' })
+    }
+
+    // ELSE GENERATE TOKEN!
+    const token = jwt.sign({ userId: isUserFound?._id }, constant.SECRET_KEY)
+
+    return res.status(200).json({ success: true, token })
   } catch (error) {
     console.log('ERROR WHILE CREATING NEW USER! ', error.message)
     res
@@ -66,6 +82,7 @@ router.get('/login', async (req, res) => {
   }
 })
 
+
 // WE ARE HANDLING USER INFO ROUTE HERE!
 
-module.exports = router
+module.exports = router;
