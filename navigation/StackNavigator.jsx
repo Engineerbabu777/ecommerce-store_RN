@@ -8,6 +8,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Entypo } from '@expo/vector-icons'
 import { AntDesign } from '@expo/vector-icons'
 import { Ionicons } from '@expo/vector-icons'
+import ProductInfoScreen from '../screens/ProductInfoScreen'
 
 export default function StackNavigator () {
   const Stack = createNativeStackNavigator()
@@ -57,9 +58,9 @@ export default function StackNavigator () {
             headerShown: false,
             tabBarIcon: ({ focused }) =>
               focused ? (
-                <AntDesign name="shoppingcart" size={24} color="#008E97" />
+                <AntDesign name='shoppingcart' size={24} color='#008E97' />
               ) : (
-                <AntDesign name="shoppingcart" size={24} color="black" />
+                <AntDesign name='shoppingcart' size={24} color='black' />
               )
           }}
         />
@@ -84,6 +85,11 @@ export default function StackNavigator () {
           name='Main'
           component={BottomTabs}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name='Info'
+          component={ProductInfoScreen}
+          // options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>
