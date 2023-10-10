@@ -193,14 +193,14 @@ export default function HomeScreen () {
           {offers.map((offer, ind) => (
             <Pressable
             onPress={() => navigation.navigate('Info',{
-              id: item.id,
-              title: item.title,
-              price: item?.price,
-              carouselImages: item.carouselImages,
-              color: item?.color,
-              size: item?.size,
-              oldPrice: item?.oldPrice,
-              item: item,
+              id: offer.id,
+              title: offer.title,
+              price: offer?.price,
+              carouselImages: offer.carouselImages,
+              color: offer?.color,
+              size: offer?.size,
+              oldPrice: offer?.oldPrice,
+              item: offer,
             })}
               key={ind}
               style={{

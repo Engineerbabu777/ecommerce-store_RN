@@ -89,7 +89,7 @@ export default function StackNavigator () {
         <Stack.Screen
           name='Info'
           component={ProductInfoScreen}
-          // options={{ headerShown: false }}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>
