@@ -7,14 +7,29 @@ import {
   ImageBackground,
   Dimensions
 } from 'react-native'
-import React from 'react'
+import React,{useState} from 'react'
 import { AntDesign } from '@expo/vector-icons'
 import { Feather } from '@expo/vector-icons'
 import { Ionicons } from '@expo/vector-icons'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { useDispatch } from 'react-redux'
+import { addToCart } from '../redux/CartReducer'
 export default function ProductInfoScreen () {
-  const route = useRoute()
+  const route = useRoute();
+  const dispatch = useDispatch();
+  const [addedToCart, setAddedToCart] = useState(false);
+  
+
+
+  const AddtoCart = (item) => {
+    setAddedToCart(true)
+    dispatch(addToCart(item))
+    setTimeout(() => {
+      setAddedToCart(false)
+    },60000);
+  }
+
   return (
     <ScrollView
       style={{ marginTop: 55, flex: 1, backgroundColor: 'white' }}
@@ -165,7 +180,7 @@ export default function ProductInfoScreen () {
 
       <View style={{ padding: 10 }}>
         <Text style={{ fontSize: 15, fontWeight: '600', marginVertical: 5 }}>
-          {route.params.price}
+          Total : {route.params.price}
         </Text>
         <Text style={{ color: '#00CED1' }}>
           FREE delivery tomorrow 2AM.Order after 10 hours
@@ -193,6 +208,35 @@ export default function ProductInfoScreen () {
           In Stock
         </Text>
       </View>
+
+      <Pressable
+        onPress={() => {
+          AddtoCart(route.params.item)
+        }}
+        style={{
+          backgroundColor: '#FFC72C',
+          padding: 10,
+          borderRadius: 20,
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginHorizontal: 10,
+          marginVertical: 10,
+        }}
+      >
+        {addedToCart ? (<Text>Added to Cart</Text>) : (<Text>Add to Cart</Text>)}
+      </Pressable>
+
+      <Pressable style={{
+          backgroundColor: '#FFAC1C',
+          padding: 10,
+          borderRadius: 20,
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginHorizontal: 10,
+          marginVertical: 10,
+        }}>
+        <Text>Buy Now</Text>
+      </Pressable>
     </ScrollView>
   )
 }

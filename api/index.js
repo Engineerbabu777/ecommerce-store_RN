@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const userRoutes = require('./controllers/userController')
 const User = require('./models/userModel')
+const addressRoutes = require('./controllers/addressController')
 
 const app = express()
 const PORT = 8080
@@ -14,6 +15,7 @@ app.use(bodyParser.json())
 
 // HANDLING ENDPOINTS !!!
 app.use('/api/user/', userRoutes) // HANDLING ALL USER ROUTES!
+app.use('/api/address', addressRoutes) // HANDLING ALL ADDRESS ROUTES!
 
 // VERIFICATION ROUTE!
 app.get('/verify/:token', async (req, res) => {
@@ -42,9 +44,7 @@ app.get('/verify/:token', async (req, res) => {
       .status(504)
       .json({ error: true, message: 'Verification Failed!' })
   }
-});
-
-
+})
 
 // CONNECTING TO DATABASE!
 mongoose
