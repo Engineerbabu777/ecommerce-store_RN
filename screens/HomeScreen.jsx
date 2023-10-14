@@ -9,7 +9,7 @@ import {
   TextInput,
   Image
 } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { AntDesign } from '@expo/vector-icons'
 import { Feather } from '@expo/vector-icons'
 import { Ionicons } from '@expo/vector-icons'
@@ -18,10 +18,12 @@ import { deals, images, list, offers } from '../data/constant'
 import { SliderBox } from 'react-native-image-slider-box'
 import ProductItem from '../components/ProductItem'
 import DropDownPicker from 'react-native-dropdown-picker'
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { BottomModal, ModalContent, SlideAnimation } from 'react-native-modals'
 import { Entypo } from '@expo/vector-icons'
+import { UserType } from '../userContext'
+import axios from 'axios'
 
 export default function HomeScreen () {
   const [products, setProducts] = useState([])
@@ -34,13 +36,33 @@ export default function HomeScreen () {
     { label: "women's clothing", value: "women's clothing" }
   ])
   const [modalOpen, setModalOpen] = useState(false)
-
+  const [selectedAddress, setSelectedAddress] = useState('')
   const cart = useSelector(state => state.cart.cart) // ACCESSING CART!
   const navigation = useNavigation()
 
   const onGenderOpen = useCallback(() => {
     setCompanyOpen(false)
   }, [])
+
+  const [addresses, setAddresses] = useState([])
+
+  const { userId } = useContext(UserType)
+
+  const fetchAddresses = async () => {
+    try {
+      const response = await axios.get(
+        `http://192.168.101.141:8080/api/address/${userId}`
+      )
+      const { addresses } = response.data
+
+      setAddresses(addresses)
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+  useEffect(() => {
+    if (userId) fetchAddresses()
+  }, [userId])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -109,9 +131,15 @@ export default function HomeScreen () {
           >
             <Ionicons name='location-outline' size={24} color='black' />
             <Pressable>
-              <Text style={{ fontSize: 13, fontWeight: '600' }}>
-                Deliver to Babu - Istanbul Marelyi
-              </Text>
+              {selectedAddress ? (
+                <Text>
+                  Deliver to {selectedAddress?.name} - {selectedAddress?.street}
+                </Text>
+              ) : (
+                <Text style={{ fontSize: 13, fontWeight: '500' }}>
+                  Add a Address
+                </Text>
+              )}
             </Pressable>
             <MaterialIcons name='keyboard-arrow-down' size={24} color='black' />
           </Pressable>
@@ -343,7 +371,55 @@ export default function HomeScreen () {
           </View>
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {console.log(selectedAddress)}
             {/* ALREADY ADDED LOACTIONS */}
+            {addresses.map((item, ind) => (
+              <Pressable
+                onPress={() => setSelectedAddress(item)}
+                key={ind}
+                style={{
+                  width: 140,
+                  height: 140,
+                  borderColor: '#D0D0D0',
+                  marginTop: 10,
+                  borderWidth: 1,
+                  padding: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginRight: 15,
+                  backgroundColor:
+                    selectedAddress === item ? '#FBCEB1' : 'white'
+                }}
+              >
+                <View
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}
+                >
+                  <Text style={{ fontWeight: 'bold', fontSize: 15 }}>
+                    {item?.name}
+                  </Text>
+                  <Entypo name='location-pin' size={24} color='red' />
+                </View>
+
+                <Text
+                  numberOfLines={1}
+                  style={{ width: 130, fontSize: 13, textAlign: 'center' }}
+                >
+                  {item?.houseNo}, {item?.landmark}
+                </Text>
+                <Text
+                  numberOfLines={1}
+                  style={{ width: 130, fontSize: 13, textAlign: 'center' }}
+                >
+                  {item?.street}
+                </Text>
+                <Text
+                  numberOfLines={1}
+                  style={{ width: 130, fontSize: 13, textAlign: 'center' }}
+                >
+                  Pakistan, Lahore
+                </Text>
+              </Pressable>
+            ))}
 
             <Pressable
               onPress={() => {

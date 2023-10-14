@@ -44,7 +44,7 @@ const orderSchema = new mongoose.Schema(
         type: String,
         required: true
       },
-      streetNo: {
+      street: {
         type: String,
         required: true
       },

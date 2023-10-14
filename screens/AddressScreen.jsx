@@ -55,6 +55,7 @@ export default function AddressScreen () {
         address
       })
       .then(response => {
+        console.log(response.data)
         Alert.alert('Success', 'Addresses added successfully')
         setName('')
         setMobileNo('')

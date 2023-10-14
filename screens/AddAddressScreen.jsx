@@ -6,6 +6,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import axios from 'axios'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { UserType } from '../userContext'
+import { Entypo } from '@expo/vector-icons'
 
 export default function AddAddressScreen ({}) {
   const navigation = useNavigation()
@@ -109,7 +110,96 @@ export default function AddAddressScreen ({}) {
             />
           </Pressable>
 
-          <Pressable>{/* all the addresses we stored! */}</Pressable>
+          <Pressable>
+            {/* all the addresses we stored! */}
+            {addresses.map((item, ind) => (
+              <Pressable
+                style={{
+                  borderWidth: 1,
+                  borderColor: '#D0D0D0',
+                  padding: 10,
+                  flexDirection: 'column',
+                  gap: 5,
+                  marginVertical: 10
+                }}
+              >
+                <View
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}
+                >
+                  <Text style={{ fontWeight: 'bold', fontSize: 15 }}>
+                    {item?.name}
+                  </Text>
+                  <Entypo name='location-pin' size={24} color='red' />
+                </View>
+
+                <Text style={{ color: '#181818', fontSize: 15 }}>
+                  {item?.houseNo}, {item?.landmark}
+                </Text>
+
+                <Text style={{ color: '#181818', fontSize: 15 }}>
+                  {item?.street}
+                </Text>
+
+                <Text style={{ color: '#181818', fontSize: 15 }}>
+                  Turkey, Istanbul
+                </Text>
+
+                <Text style={{ color: '#181818', fontSize: 15 }}>
+                  Phone No: {item?.mobileNo}
+                </Text>
+
+                <Text style={{ color: '#181818', fontSize: 15 }}>
+                  Pin code: {item?.postalCode}
+                </Text>
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 10,
+                    marginTop: 10
+                  }}
+                >
+                  <Pressable
+                    style={{
+                      paddingHorizontal: 10,
+                      paddingVertical: 6,
+                      borderRadius: 5,
+                      borderWidth: 0.9,
+                      borderColor: '#D0D0D0',
+                      backgroundColor: '#F5F5F5'
+                    }}
+                  >
+                    <Text>Edit</Text>
+                  </Pressable>
+                  <Pressable
+                    style={{
+                      paddingHorizontal: 10,
+                      paddingVertical: 6,
+                      borderRadius: 5,
+                      borderWidth: 0.9,
+                      borderColor: '#D0D0D0',
+                      backgroundColor: '#F5F5F5'
+                    }}
+                  >
+                    <Text>Remove</Text>
+                  </Pressable>
+                  <Pressable
+                    style={{
+                      paddingHorizontal: 10,
+                      paddingVertical: 6,
+                      borderRadius: 5,
+                      borderWidth: 0.9,
+                      borderColor: '#D0D0D0',
+                      backgroundColor: '#F5F5F5'
+                    }}
+                  >
+                    <Text>Set as Default</Text>
+                  </Pressable>
+                </View>
+              </Pressable>
+            ))}
+          </Pressable>
         </View>
       </ScrollView>
     </>
